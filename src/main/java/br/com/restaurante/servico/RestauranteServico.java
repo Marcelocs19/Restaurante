@@ -22,7 +22,8 @@ public class RestauranteServico {
 	}
 	
 	public Restaurante cadastrarNovoRestaurante(RestauranteForm restauranteForm) {
-		Restaurante novoRestaurante = new Restaurante(restauranteForm.getNome(),Estado.DISPONIVEL,0);
+		String nomeRestaurante = restauranteForm.getNome().trim();
+		Restaurante novoRestaurante = new Restaurante(nomeRestaurante,Estado.DISPONIVEL,0);
 		restauranteRepositorio.saveAndFlush(novoRestaurante);
 		return novoRestaurante;
 	}

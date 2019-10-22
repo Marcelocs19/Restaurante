@@ -30,7 +30,7 @@ public class Restaurante implements Serializable {
 	private Long id;
 	
 	@NotBlank(message = "O campo nome é obrigatório.")
-	@Column(name = "nome", length = 80, nullable = false)
+	@Column(name = "nome", length = 80, nullable = false, unique = true)
 	private String nome;
 	
 	@Enumerated(EnumType.STRING)
