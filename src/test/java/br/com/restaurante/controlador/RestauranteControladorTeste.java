@@ -2,8 +2,10 @@ package br.com.restaurante.controlador;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,8 +21,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import br.com.restaurante.RestauranteApplication;
 import br.com.restaurante.dto.RestauranteDto;
+import br.com.restaurante.form.RestauranteForm;
 import br.com.restaurante.modelo.Estado;
 import br.com.restaurante.modelo.Restaurante;
 import br.com.restaurante.servico.RestauranteServico;
@@ -103,12 +108,50 @@ public class RestauranteControladorTeste {
 	}
 	
 	@Test
-	public void testeListarTodosRestaurantesDisponiveisNotFound() throws Exception {
+	public void testeListarTodosRestaurantesDisponiveisErroListaVazia() throws Exception {
 		listaRestauranteDto.clear();
 		given(this.restauranteServico.listaRestaurantesDisponiveis()).willReturn(listaRestauranteDto);
 		mockMvc.perform(get(LISTA_RESTAURANTE)
 				.accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isNotFound());
 	}
+	
+	@Test
+	public void testeCadastrarNovoRestauranteSucesso() throws Exception {
+		RestauranteForm restauranteForm = new RestauranteForm();
+		restauranteForm.setNome("Restaurante Teste");
+		ObjectMapper mapper = new ObjectMapper();
+		String novoRestaurante = mapper.writeValueAsString(restauranteForm);
+		mockMvc.perform(post(LISTA_RESTAURANTE)
+				.content(novoRestaurante).accept(MediaType.APPLICATION_JSON_VALUE)
+				.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(status().isCreated());
+	}
+	
+	@Test
+	public void testeCadastrarNovoRestauranteErroNomeRepetido() throws Exception {
+		RestauranteForm restauranteForm = new RestauranteForm();
+		restauranteForm.setNome("Restaurante Teste");
+		ObjectMapper mapper = new ObjectMapper();
+		String novoRestaurante = mapper.writeValueAsString(restauranteForm);
+		mockMvc.perform(post(LISTA_RESTAURANTE)
+				.content(novoRestaurante).accept(MediaType.APPLICATION_JSON_VALUE)
+				.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(status().isBadRequest());
+	}
+	
+	@Test
+	public void testeCadastrarNovoRestauranteErroSemNome() throws Exception {
+		RestauranteForm restauranteForm = new RestauranteForm();
+		restauranteForm.setNome(null);
+		ObjectMapper mapper = new ObjectMapper();
+		String novoRestaurante = mapper.writeValueAsString(restauranteForm);
+		mockMvc.perform(post(LISTA_RESTAURANTE)
+				.content(novoRestaurante).accept(MediaType.APPLICATION_JSON_VALUE)
+				.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(status().isBadRequest());
+	}
+	
+	
 
 }
