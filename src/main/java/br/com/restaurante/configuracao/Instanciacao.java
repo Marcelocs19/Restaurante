@@ -26,11 +26,11 @@ public class Instanciacao implements CommandLineRunner {
 
 		funcionarioRepositorio.deleteAll();
 
-		Funcionario funcionario1 = new Funcionario("João","joao@email.com");
-		Funcionario funcionario2 = new Funcionario("Pedro","pedro@email.com");
-		Funcionario funcionario3 = new Funcionario("Maria","maria@email.com");
-		Funcionario funcionario4 = new Funcionario("Ana","ana@email.com");
-		Funcionario funcionario5 = new Funcionario("Paula","paula@email.com");
+		Funcionario funcionario1 = new Funcionario("João","joao@email.com",false);
+		Funcionario funcionario2 = new Funcionario("Pedro","pedro@email.com",false);
+		Funcionario funcionario3 = new Funcionario("Maria","maria@email.com",false);
+		Funcionario funcionario4 = new Funcionario("Ana","ana@email.com",false);
+		Funcionario funcionario5 = new Funcionario("Paula","paula@email.com",false);
 		
 		funcionarioRepositorio.saveAll(Arrays.asList(funcionario1,funcionario2,funcionario3,funcionario4,funcionario5));
 		

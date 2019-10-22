@@ -44,19 +44,21 @@ public class RestauranteServico {
 
 	public Restaurante votar(Long id, @Valid FuncionarioForm funcionarioForm) {
 		Optional<Restaurante> restaurante = restauranteRepositorio.findById(id);
-		if (restaurante.isPresent()) {
+		List<Funcionario> listaDosFuncionariosRestantesNaVotacao = funcionarioRepositorio.findByVoto(false);
+		if (restaurante.isPresent() && !listaDosFuncionariosRestantesNaVotacao.isEmpty()) {
 			Funcionario funcionario = funcionarioRepositorio.findByEmail(funcionarioForm.getEmail());
-			if (funcionario != null) {
-				Votacao jaVotou = votacaoRepositorio.findByFuncionario(funcionario.getId());
-				if (jaVotou != null) {
-					Votacao votacao = new Votacao(funcionario, restaurante.get());
-					votacaoRepositorio.saveAndFlush(votacao);
-					restaurante.get().setNumeroVotos(restaurante.get().getNumeroVotos() + 1);
-				}
-			}			
+			if (funcionario != null && !funcionario.isVoto()) {
+				Votacao votacao = new Votacao(funcionario, restaurante.get());
+				votacaoRepositorio.saveAndFlush(votacao);
+				funcionario.setVoto(true);
+				restaurante.get().setNumeroVotos(restaurante.get().getNumeroVotos() + 1);
+			}
+			return restaurante.get();
+		} else {
+			List<Restaurante> listaRestauranteVencedor = restauranteRepositorio.findAllByOrderByNumeroVotosDesc();
+			Restaurante vencedor = listaRestauranteVencedor.get(listaRestauranteVencedor.size() - 1);
+			return vencedor;
 		}
-		return restaurante.get();
-		
 	}
 
 }
