@@ -8,4 +8,6 @@ import br.com.restaurante.modelo.Funcionario;
 @Repository
 public interface FuncionarioRepositorio extends JpaRepository<Funcionario, Long>{
 
+	Funcionario findByEmail(String email);
+	
 }

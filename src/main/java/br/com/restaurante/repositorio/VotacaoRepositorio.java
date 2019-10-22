@@ -8,4 +8,6 @@ import br.com.restaurante.modelo.Votacao;
 @Repository
 public interface VotacaoRepositorio extends JpaRepository<Votacao, Long>{
 
+	Votacao findByFuncionario(Long id);
+	
 }
