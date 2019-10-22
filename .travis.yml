@@ -1,4 +1,8 @@
 language: java
 jdk: oraclejdk12
+
+services:
+  - mysql
+  
 before_install:
   - chmod +x mvnw
