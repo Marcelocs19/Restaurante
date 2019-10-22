@@ -1,4 +1,5 @@
 language: java
 jdk: oraclejdk12
+script: mvn test -f ./Restaurante/pom.xml
 before_install:
   - chmod +x mvnw
