@@ -40,13 +40,12 @@ public class Instanciacao implements CommandLineRunner {
 		Restaurante restaurante1 = new Restaurante("Silva Lanches", Estado.DISPONIVEL, 0);
 		Restaurante restaurante2 = new Restaurante("Mazá", Estado.DISPONIVEL, 0);
 		Restaurante restaurante3 = new Restaurante("Espaço 32", Estado.DISPONIVEL, 0);
-		Restaurante restaurante4 = new Restaurante("Espaço 32", Estado.DISPONIVEL, 0);
-		Restaurante restaurante5 = new Restaurante("Severo Garage", Estado.DISPONIVEL, 0);
-		Restaurante restaurante6 = new Restaurante("Restaurante Vitória", Estado.DISPONIVEL, 0);
-		Restaurante restaurante7 = new Restaurante("Pé de Manga", Estado.DISPONIVEL, 0);
+		Restaurante restaurante4 = new Restaurante("Severo Garage", Estado.DISPONIVEL, 0);
+		Restaurante restaurante5 = new Restaurante("Restaurante Vitória", Estado.DISPONIVEL, 0);
+		Restaurante restaurante6 = new Restaurante("Pé de Manga", Estado.DISPONIVEL, 0);
 		
 		
-		restauranteRepositorio.saveAll(Arrays.asList(restaurante1,restaurante2,restaurante3,restaurante4,restaurante5,restaurante6,restaurante7));
+		restauranteRepositorio.saveAll(Arrays.asList(restaurante1,restaurante2,restaurante3,restaurante4,restaurante5,restaurante6));
 
 	}
 	
