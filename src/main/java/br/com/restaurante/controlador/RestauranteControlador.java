@@ -34,10 +34,11 @@ public class RestauranteControlador {
 
 	@Autowired
 	private RestauranteServico restauranteServico;
+	
 
 	@GetMapping
 	public ResponseEntity<List<RestauranteDto>> listaRestaurantesDisponiveisParaVoto() {
-		List<RestauranteDto> listaRestaurantes = restauranteServico.listaRestaurantesDisponiveis();
+		List<RestauranteDto> listaRestaurantes = this.restauranteServico.listaRestaurantesDisponiveis();
 		if (listaRestaurantes.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
@@ -50,7 +51,7 @@ public class RestauranteControlador {
 			BindingResult bindingResult, UriComponentsBuilder uriBuilder) {
 		HttpHeaders headers = new HttpHeaders();
 		if (!bindingResult.hasErrors()) {
-			Restaurante restaurante = restauranteServico.cadastrarNovoRestaurante(restauranteForm);
+			Restaurante restaurante = this.restauranteServico.cadastrarNovoRestaurante(restauranteForm);
 			RestauranteDto restauranteDto = new RestauranteDto(restaurante);
 			URI uri = uriBuilder.path(ID_RESTAURANTE).buildAndExpand(restaurante.getId()).toUri();
 			headers.setLocation(uri);
@@ -66,7 +67,7 @@ public class RestauranteControlador {
 			@RequestBody @Valid FuncionarioForm funcionarioForm, BindingResult bindingResult, UriComponentsBuilder uriBuilder) {
 		HttpHeaders headers = new HttpHeaders();
 		if (!bindingResult.hasErrors()) {
-			Restaurante restaurante = restauranteServico.votar(id,funcionarioForm);
+			Restaurante restaurante = this.restauranteServico.votar(id,funcionarioForm);
 			RestauranteDto restauranteDto = new RestauranteDto(restaurante);
 			URI uri = uriBuilder.path(ID_RESTAURANTE).buildAndExpand(restaurante.getId()).toUri();
 			headers.setLocation(uri);

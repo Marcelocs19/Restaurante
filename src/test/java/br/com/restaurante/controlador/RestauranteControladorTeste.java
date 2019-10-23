@@ -13,7 +13,6 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,6 +27,7 @@ import br.com.restaurante.dto.RestauranteDto;
 import br.com.restaurante.form.RestauranteForm;
 import br.com.restaurante.modelo.Estado;
 import br.com.restaurante.modelo.Restaurante;
+import br.com.restaurante.repositorio.RestauranteRepositorio;
 import br.com.restaurante.servico.RestauranteServico;
 
 @RunWith(SpringRunner.class)
@@ -45,11 +45,15 @@ public class RestauranteControladorTeste {
 	private static final Estado DISPONIVEL = Estado.DISPONIVEL;
 	private static final Estado INDISPONIVEL = Estado.INDISPONIVEL;
 
-	@Autowired
+	@MockBean
 	private MockMvc mockMvc;
-
+	
 	@MockBean
 	private RestauranteServico restauranteServico;
+	
+	@MockBean 
+	private RestauranteRepositorio restauranteRepositorio;
+
 
 	private Restaurante restaurante1;
 	private Restaurante restaurante2;
@@ -61,7 +65,7 @@ public class RestauranteControladorTeste {
 
 	@Before
 	public void setup() {
-
+		
 		listaRestaurante = new ArrayList<>();
 		listaRestauranteDto = new ArrayList<>();
 
@@ -130,8 +134,10 @@ public class RestauranteControladorTeste {
 	
 	@Test
 	public void testeCadastrarNovoRestauranteErroNomeRepetido() throws Exception {
+		listaRestauranteDto.addAll(RestauranteDto.convertMoviesToDto(listaRestaurante));
+		given(this.restauranteServico.listaRestaurantesDisponiveis()).willReturn(listaRestauranteDto);
 		RestauranteForm restauranteForm = new RestauranteForm();
-		restauranteForm.setNome("Restaurante Teste");
+		restauranteForm.setNome("Pizzaria Fragata");
 		ObjectMapper mapper = new ObjectMapper();
 		String novoRestaurante = mapper.writeValueAsString(restauranteForm);
 		mockMvc.perform(post(LISTA_RESTAURANTE)

@@ -13,6 +13,6 @@ public interface RestauranteRepositorio extends JpaRepository<Restaurante, Long>
 	
 	List<Restaurante> findByEstado(Estado estado);
 	
-	List<Restaurante> findAllByOrderByNumeroVotosDesc();
+	List<Restaurante> findAllByOrderByNumeroVotosAsc();
 	
 }

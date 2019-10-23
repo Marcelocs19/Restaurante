@@ -30,7 +30,7 @@ public class RestauranteServico {
 
 	@Autowired
 	private FuncionarioRepositorio funcionarioRepositorio;
-
+	
 	public List<RestauranteDto> listaRestaurantesDisponiveis() {
 		return RestauranteDto.convertMoviesToDto(restauranteRepositorio.findByEstado(Estado.DISPONIVEL));
 	}
@@ -39,7 +39,7 @@ public class RestauranteServico {
 		String nomeRestaurante = restauranteForm.getNome().trim();
 		Restaurante novoRestaurante = new Restaurante(nomeRestaurante, Estado.DISPONIVEL, 0);
 		restauranteRepositorio.saveAndFlush(novoRestaurante);
-		return novoRestaurante;
+		return novoRestaurante;		
 	}
 
 	public Restaurante votar(Long id, @Valid FuncionarioForm funcionarioForm) {
@@ -55,10 +55,30 @@ public class RestauranteServico {
 			}
 			return restaurante.get();
 		} else {
-			List<Restaurante> listaRestauranteVencedor = restauranteRepositorio.findAllByOrderByNumeroVotosDesc();
+			List<Restaurante> listaRestauranteVencedor = restauranteRepositorio.findAllByOrderByNumeroVotosAsc();
 			Restaurante vencedor = listaRestauranteVencedor.get(listaRestauranteVencedor.size() - 1);
+			restaurante.get().setEstado(Estado.INDISPONIVEL);
+			restaurante.get().setNumeroVotos(0);
+			limparVotosFuncionario(); 
+			limparVotosRestaurantes();
 			return vencedor;
 		}
 	}
+	
+	private void limparVotosFuncionario() {
+		List<Funcionario> listaLimparVotos = funcionarioRepositorio.findAll();
+		for(int i = 0; i < listaLimparVotos.size(); i++) {
+			listaLimparVotos.get(i).setVoto(false);
+		}
+	}
+	
+	private void limparVotosRestaurantes() {
+		List<Restaurante> listaLimparVotos = restauranteRepositorio.findByEstado(Estado.DISPONIVEL);
+		for(int i = 0; i < listaLimparVotos.size(); i++) {
+			listaLimparVotos.get(i).setNumeroVotos(0);
+		}
+		
+	}
+
 
 }
