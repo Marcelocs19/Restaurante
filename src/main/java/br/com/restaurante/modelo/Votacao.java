@@ -29,8 +29,8 @@ public class Votacao implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long id;
 	
-	@Column(name = "data_voto") 
-	private LocalDateTime data_voto = LocalDateTime.now();
+	@Column(name = "data_voto", nullable = true) 
+	private LocalDateTime dataVoto = LocalDateTime.now();
 	
 	@OneToOne
 	private Funcionario funcionario;
