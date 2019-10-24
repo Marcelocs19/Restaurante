@@ -36,14 +36,17 @@ public class Funcionario implements Serializable {
 	@Column(name = "email", nullable = false, unique = true)
 	@Email(message = "O e-mail precisa ser válido.")
 	private String email;
+	
+	@Column(name = "voto")
+	private boolean voto;
 
 	public Funcionario(@NotBlank(message = "O campo nome é obrigatório.") String nome,
-			@NotBlank(message = "O campo e-mail é obrigatório.") @Email(message = "O e-mail precisa ser válido.") String email) {
+			@NotBlank(message = "O campo e-mail é obrigatório.") @Email(message = "O e-mail precisa ser válido.") String email,
+			boolean voto) {
 		super();
 		this.nome = nome;
 		this.email = email;
-	}
-	
-	
+		this.voto = voto;
+	}	
 
 }

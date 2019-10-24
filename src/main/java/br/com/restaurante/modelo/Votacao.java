@@ -38,9 +38,8 @@ public class Votacao implements Serializable {
 	@ManyToOne
 	private Restaurante restaurante;
 
-	public Votacao(LocalDateTime data_voto, Funcionario funcionario, Restaurante restaurante) {
+	public Votacao(Funcionario funcionario, Restaurante restaurante) {
 		super();
-		this.data_voto = data_voto;
 		this.funcionario = funcionario;
 		this.restaurante = restaurante;
 	}

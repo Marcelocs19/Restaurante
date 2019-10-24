@@ -25,9 +25,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.restaurante.RestauranteApplication;
 import br.com.restaurante.dto.RestauranteDto;
+import br.com.restaurante.form.FuncionarioForm;
 import br.com.restaurante.form.RestauranteForm;
 import br.com.restaurante.modelo.Estado;
+import br.com.restaurante.modelo.Funcionario;
 import br.com.restaurante.modelo.Restaurante;
+import br.com.restaurante.repositorio.FuncionarioRepositorio;
 import br.com.restaurante.servico.RestauranteServico;
 
 @RunWith(SpringRunner.class)
@@ -51,17 +54,24 @@ public class RestauranteControladorTeste {
 	@MockBean
 	private RestauranteServico restauranteServico;
 
+	@MockBean
+	private FuncionarioRepositorio funcionarioRepositorio;
+
+	private Funcionario funcionario1;
+
 	private Restaurante restaurante1;
 	private Restaurante restaurante2;
 	private Restaurante restaurante3;
 	private Restaurante restaurante4;
 
+	private List<Funcionario> listaFuncionario;
 	private List<Restaurante> listaRestaurante;
 	private List<RestauranteDto> listaRestauranteDto;
 
 	@Before
 	public void setup() {
 
+		listaFuncionario = new ArrayList<>();
 		listaRestaurante = new ArrayList<>();
 		listaRestauranteDto = new ArrayList<>();
 
@@ -85,6 +95,14 @@ public class RestauranteControladorTeste {
 		restaurante4.setNome("Silva Lanches");
 		restaurante4.setEstado(INDISPONIVEL);
 
+		funcionario1 = new Funcionario();
+		funcionario1.setId(5L);
+		funcionario1.setEmail("teste@email.com");
+		funcionario1.setNome("Teste");
+		funcionario1.setVoto(false);
+
+		listaFuncionario.add(funcionario1);
+
 		listaRestaurante.addAll(Arrays.asList(restaurante1, restaurante2, restaurante3, restaurante4));
 
 	}
@@ -93,9 +111,7 @@ public class RestauranteControladorTeste {
 	public void testeListarTodosRestaurantesDisponiveisSucesso() throws Exception {
 		listaRestauranteDto.addAll(RestauranteDto.convertMoviesToDto(listaRestaurante));
 		given(this.restauranteServico.listaRestaurantesDisponiveis()).willReturn(listaRestauranteDto);
-		mockMvc.perform(get(LISTA_RESTAURANTE)
-				.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk())
+		mockMvc.perform(get(LISTA_RESTAURANTE).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(jsonPath("$.[0].id").value(TESTE1_ID_RESTAURANTE))
 				.andExpect(jsonPath("$.[0].nome").value("Pizzaria Fragata"))
 				.andExpect(jsonPath("$.[0].estado").value(DISPONIVEL.toString()))
@@ -106,52 +122,42 @@ public class RestauranteControladorTeste {
 				.andExpect(jsonPath("$.[2].nome").value("Restaurante Panorama"))
 				.andExpect(jsonPath("$.[2].estado").value(DISPONIVEL.toString()));
 	}
-	
+
 	@Test
 	public void testeListarTodosRestaurantesDisponiveisErroListaVazia() throws Exception {
 		listaRestauranteDto.clear();
 		given(this.restauranteServico.listaRestaurantesDisponiveis()).willReturn(listaRestauranteDto);
-		mockMvc.perform(get(LISTA_RESTAURANTE)
-				.accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isNotFound());
+		mockMvc.perform(get(LISTA_RESTAURANTE).accept(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
 	}
-	
-	@Test
-	public void testeCadastrarNovoRestauranteSucesso() throws Exception {
-		RestauranteForm restauranteForm = new RestauranteForm();
-		restauranteForm.setNome("Restaurante Teste");
-		ObjectMapper mapper = new ObjectMapper();
-		String novoRestaurante = mapper.writeValueAsString(restauranteForm);
-		mockMvc.perform(post(LISTA_RESTAURANTE)
-				.content(novoRestaurante).accept(MediaType.APPLICATION_JSON_VALUE)
-				.contentType(MediaType.APPLICATION_JSON_VALUE))
-				.andExpect(status().isCreated());
-	}
-	
-	@Test
-	public void testeCadastrarNovoRestauranteErroNomeRepetido() throws Exception {
-		RestauranteForm restauranteForm = new RestauranteForm();
-		restauranteForm.setNome("Restaurante Teste");
-		ObjectMapper mapper = new ObjectMapper();
-		String novoRestaurante = mapper.writeValueAsString(restauranteForm);
-		mockMvc.perform(post(LISTA_RESTAURANTE)
-				.content(novoRestaurante).accept(MediaType.APPLICATION_JSON_VALUE)
-				.contentType(MediaType.APPLICATION_JSON_VALUE))
-				.andExpect(status().isBadRequest());
-	}
-	
+
+
 	@Test
 	public void testeCadastrarNovoRestauranteErroSemNome() throws Exception {
 		RestauranteForm restauranteForm = new RestauranteForm();
 		restauranteForm.setNome(null);
 		ObjectMapper mapper = new ObjectMapper();
 		String novoRestaurante = mapper.writeValueAsString(restauranteForm);
-		mockMvc.perform(post(LISTA_RESTAURANTE)
-				.content(novoRestaurante).accept(MediaType.APPLICATION_JSON_VALUE)
-				.contentType(MediaType.APPLICATION_JSON_VALUE))
-				.andExpect(status().isBadRequest());
+		mockMvc.perform(post(LISTA_RESTAURANTE).content(novoRestaurante).accept(MediaType.APPLICATION_JSON_VALUE)
+				.contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isBadRequest());
 	}
 	
-	
+	@Test
+	public void testeVotarRestauranteSucesso() throws Exception {
+		listaRestauranteDto.addAll(RestauranteDto.convertMoviesToDto(listaRestaurante));
+		given(this.restauranteServico.listaRestaurantesDisponiveis()).willReturn(listaRestauranteDto);		
+		given(this.funcionarioRepositorio.findAll()).willReturn(listaFuncionario);
+		
+		FuncionarioForm funcionarioForm = new FuncionarioForm();
+		funcionarioForm.setEmail(funcionario1.getEmail());
+		funcionarioForm.setNome(funcionario1.getNome());
+		ObjectMapper mapper = new ObjectMapper();
+		String funcionario = mapper.writeValueAsString(funcionarioForm);
+		
+		mockMvc.perform(post("/restaurantes/votar/1")
+				.content(funcionario).accept(MediaType.APPLICATION_JSON_VALUE)
+				.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(status().isOk());
+		
+	}
 
 }
