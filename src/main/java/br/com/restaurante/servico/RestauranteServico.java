@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import br.com.restaurante.dto.RestauranteDto;
 import br.com.restaurante.form.FuncionarioForm;
-import br.com.restaurante.form.RestauranteForm;
 import br.com.restaurante.modelo.Estado;
 import br.com.restaurante.modelo.Funcionario;
 import br.com.restaurante.modelo.Restaurante;
@@ -33,13 +32,6 @@ public class RestauranteServico {
 	
 	public List<RestauranteDto> listaRestaurantesDisponiveis() {
 		return RestauranteDto.convertMoviesToDto(restauranteRepositorio.findByEstado(Estado.DISPONIVEL));
-	}
-
-	public Restaurante cadastrarNovoRestaurante(RestauranteForm restauranteForm) {
-		String nomeRestaurante = restauranteForm.getNome().trim();
-		Restaurante novoRestaurante = new Restaurante(nomeRestaurante, Estado.DISPONIVEL, 0);
-		restauranteRepositorio.saveAndFlush(novoRestaurante);
-		return novoRestaurante;		
 	}
 
 	public Restaurante votar(Long id, @Valid FuncionarioForm funcionarioForm) {

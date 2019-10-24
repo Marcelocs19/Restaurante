@@ -130,25 +130,6 @@ public class RestauranteControladorTeste {
 		mockMvc.perform(get(LISTA_RESTAURANTE).accept(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
 	}
 
-	@Test
-	public void testeCadastrarNovoRestauranteSucesso() throws Exception {
-		RestauranteForm restauranteForm = new RestauranteForm();
-		restauranteForm.setNome("Restaurante Teste");
-		ObjectMapper mapper = new ObjectMapper();
-		String novoRestaurante = mapper.writeValueAsString(restauranteForm);
-		mockMvc.perform(post(LISTA_RESTAURANTE).content(novoRestaurante).accept(MediaType.APPLICATION_JSON_VALUE)
-				.contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isCreated());
-	}
-
-	@Test
-	public void testeCadastrarNovoRestauranteErroNomeRepetido() throws Exception {
-		RestauranteForm restauranteForm = new RestauranteForm();
-		restauranteForm.setNome("Restaurante Teste");
-		ObjectMapper mapper = new ObjectMapper();
-		String novoRestaurante = mapper.writeValueAsString(restauranteForm);
-		mockMvc.perform(post(LISTA_RESTAURANTE).content(novoRestaurante).accept(MediaType.APPLICATION_JSON_VALUE)
-				.contentType(MediaType.APPLICATION_JSON_VALUE)).andExpect(status().isBadRequest());
-	}
 
 	@Test
 	public void testeCadastrarNovoRestauranteErroSemNome() throws Exception {

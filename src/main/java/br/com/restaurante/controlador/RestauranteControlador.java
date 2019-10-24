@@ -21,7 +21,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.restaurante.dto.RestauranteDto;
 import br.com.restaurante.form.FuncionarioForm;
-import br.com.restaurante.form.RestauranteForm;
 import br.com.restaurante.modelo.Restaurante;
 import br.com.restaurante.servico.RestauranteServico;
 
@@ -43,22 +42,6 @@ public class RestauranteControlador {
 			return ResponseEntity.notFound().build();
 		}
 		return ResponseEntity.ok().body(listaRestaurantes);
-	}
-
-	@PostMapping
-	@Transactional
-	public ResponseEntity<RestauranteDto> novoRestaurante(@RequestBody @Valid RestauranteForm restauranteForm,
-			BindingResult bindingResult, UriComponentsBuilder uriBuilder) {
-		HttpHeaders headers = new HttpHeaders();
-		if (!bindingResult.hasErrors()) {
-			Restaurante restaurante = this.restauranteServico.cadastrarNovoRestaurante(restauranteForm);
-			RestauranteDto restauranteDto = new RestauranteDto(restaurante);
-			URI uri = uriBuilder.path(ID_RESTAURANTE).buildAndExpand(restaurante.getId()).toUri();
-			headers.setLocation(uri);
-			return new ResponseEntity<RestauranteDto>(restauranteDto, headers, HttpStatus.CREATED);
-		} else {
-			return new ResponseEntity<RestauranteDto>(headers, HttpStatus.BAD_REQUEST);
-		}
 	}
 
 	@PostMapping(VOTAR_RESTAURANTE)
