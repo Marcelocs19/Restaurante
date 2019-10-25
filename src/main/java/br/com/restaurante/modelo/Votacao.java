@@ -43,12 +43,5 @@ public class Votacao implements Serializable {
 		this.funcionario = funcionario;
 		this.restaurante = restaurante;
 	}
-
-	public Votacao(LocalDate dataVoto, Funcionario funcionario, Restaurante restaurante) {
-		super();
-		this.dataVoto = dataVoto;
-		this.funcionario = funcionario;
-		this.restaurante = restaurante;
-	}	
 	
 }
