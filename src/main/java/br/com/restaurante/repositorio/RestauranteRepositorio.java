@@ -1,6 +1,6 @@
 package br.com.restaurante.repositorio;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +14,7 @@ public interface RestauranteRepositorio extends JpaRepository<Restaurante, Long>
 	
 	List<Restaurante> findByEstado(Estado estado);
 	
-	List<Restaurante> findByDataVitoria(LocalDateTime data);
+	List<Restaurante> findByDataVitoria(LocalDate data);
 	
 	List<Restaurante> findAllByOrderByNumeroVotosDesc();
 	

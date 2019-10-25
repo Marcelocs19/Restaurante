@@ -1,7 +1,6 @@
 package br.com.restaurante.servico;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,7 +52,7 @@ public class RestauranteServico {
 	}
 
 	private Restaurante restauranteVencedor() {
-		LocalDateTime data = LocalDateTime.now();
+		LocalDate data = LocalDate.now();
 		Restaurante vencedor = restauranteRepositorio.findAllByOrderByNumeroVotosDesc().get(0);
 		vencedor.setDataVitoria(data);
 		vencedor.setEstado(Estado.INDISPONIVEL);
@@ -71,39 +70,31 @@ public class RestauranteServico {
 	}
 
 	private boolean validarVoto(Funcionario funcionario) {
-		boolean valido = true;
-		LocalDateTime data = LocalDateTime.now();
+		boolean valido = false;		
+		LocalDate data = LocalDate.now();	
 		List<Restaurante> restauranteVencedor = restauranteRepositorio.findByDataVitoria(data);
 		if (restauranteVencedor.isEmpty()) {
-			if (funcionario.isVoto()) {
-				valido = false;
+			if (!funcionario.isVoto()) {
+				valido = true;
 			}
 		} else {
 			Restaurante vencedor = restauranteRepositorio.findAllByOrderByDataVitoriaDesc().get(0);
-			String dataAtual = pegaDataAtual();
-			String dataVitoriaRestaurante = pegaDataRestaurante(vencedor);
-			if(dataAtual.equals(dataVitoriaRestaurante)) {
-				if (funcionario.isVoto()) {
-					valido = false;
+			LocalDate dataVitoriaRestaurante = pegaDataRestaurante(vencedor);
+			if(!data.equals(dataVitoriaRestaurante)) {
+				if (!funcionario.isVoto()) {
+					valido = true;
 				}
 			}
 		}
 		return valido;
 	}
 	
-	private String pegaDataRestaurante(Restaurante restaurante) {
-		LocalDateTime data = restaurante.getDataVitoria();
-		DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-		String dataVotacao = data.format(formatter).substring(0, 10);
+	private LocalDate pegaDataRestaurante(Restaurante restaurante) {
+		LocalDate dataVotacao = restaurante.getDataVitoria();
+		System.out.println("PEGADATA: " + restaurante.getDataVitoria());		
 		return dataVotacao;
 	}
 
-	private String pegaDataAtual() {
-		LocalDateTime data = LocalDateTime.now();
-		DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-		String dataAtual = data.format(formatter).substring(0, 10);
-		return dataAtual;
-	}
 
 	private void limparVotosFuncionario() {
 		List<Funcionario> listaLimparVotos = funcionarioRepositorio.findAll();

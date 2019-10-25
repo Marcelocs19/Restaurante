@@ -29,15 +29,15 @@ public class Funcionario implements Serializable {
 	private Long id;
 	
 	@NotBlank(message = "O campo nome é obrigatório.")
-	@Column(name = "nome", length = 80, nullable = false)
+	@Column(name = "NOME", length = 80, nullable = false)
 	private String nome;
 	
 	@NotBlank(message = "O campo e-mail é obrigatório.")
-	@Column(name = "email", nullable = false, unique = true)
+	@Column(name = "EMAIL", nullable = false, unique = true)
 	@Email(message = "O e-mail precisa ser válido.")
 	private String email;
 	
-	@Column(name = "voto")
+	@Column(name = "VOTO")
 	private boolean voto;
 
 	public Funcionario(@NotBlank(message = "O campo nome é obrigatório.") String nome,
