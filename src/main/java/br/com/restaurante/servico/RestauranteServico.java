@@ -33,7 +33,7 @@ public class RestauranteServico {
 	private FuncionarioRepositorio funcionarioRepositorio;
 
 	public List<RestauranteDto> listaRestaurantesDisponiveis() {
-		return RestauranteDto.convertMoviesToDto(restauranteRepositorio.findAll());
+		return RestauranteDto.convertMoviesToDto(restauranteRepositorio.findAllByOrderByNumeroVotosDesc());
 	}
 
 	public Restaurante votar(Long id, @Valid FuncionarioForm funcionarioForm) {
