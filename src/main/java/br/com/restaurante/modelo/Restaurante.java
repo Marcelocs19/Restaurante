@@ -1,6 +1,7 @@
 package br.com.restaurante.modelo;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,13 +31,16 @@ public class Restaurante implements Serializable {
 	private Long id;
 	
 	@NotBlank(message = "O campo nome é obrigatório.")
-	@Column(name = "nome", length = 80, nullable = false, unique = true)
+	@Column(name = "NOME", length = 80, nullable = false, unique = true)
 	private String nome;
 	
 	@Enumerated(EnumType.STRING)
 	private Estado estado;
 	
-	@Column(name = "numero_votos")
+	@Column(name = "DATA_VITORIA", nullable = true) 	
+	private LocalDate dataVitoria;
+	
+	@Column(name = "NUMERO_VOTOS", nullable = true)
 	private int numeroVotos;
 
 	public Restaurante(@NotBlank(message = "O campo nome é obrigatório.") String nome, Estado estado, int numeroVotos) {
@@ -44,6 +48,6 @@ public class Restaurante implements Serializable {
 		this.nome = nome;
 		this.estado = estado;
 		this.numeroVotos = numeroVotos;
-	}	
+	}
 	
 }

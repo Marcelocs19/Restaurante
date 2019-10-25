@@ -1,7 +1,7 @@
 package br.com.restaurante.modelo;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,8 +29,8 @@ public class Votacao implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private Long id;
 	
-	@Column(name = "data_voto") 
-	private LocalDateTime data_voto = LocalDateTime.now();
+	@Column(name = "DATA_VOTO", nullable = true) 
+	private LocalDate dataVoto = LocalDate.now();
 	
 	@OneToOne
 	private Funcionario funcionario;
@@ -43,5 +43,5 @@ public class Votacao implements Serializable {
 		this.funcionario = funcionario;
 		this.restaurante = restaurante;
 	}
-		
+	
 }

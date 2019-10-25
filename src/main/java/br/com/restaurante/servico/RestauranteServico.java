@@ -1,5 +1,7 @@
 package br.com.restaurante.servico;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,48 +31,96 @@ public class RestauranteServico {
 
 	@Autowired
 	private FuncionarioRepositorio funcionarioRepositorio;
-	
+
 	public List<RestauranteDto> listaRestaurantesDisponiveis() {
-		return RestauranteDto.convertMoviesToDto(restauranteRepositorio.findByEstado(Estado.DISPONIVEL));
+		return RestauranteDto.convertMoviesToDto(restauranteRepositorio.findAll());
 	}
 
 	public Restaurante votar(Long id, @Valid FuncionarioForm funcionarioForm) {
 		Optional<Restaurante> restaurante = restauranteRepositorio.findById(id);
-		List<Funcionario> listaDosFuncionariosRestantesNaVotacao = funcionarioRepositorio.findByVoto(false);
-		if (restaurante.isPresent() && !listaDosFuncionariosRestantesNaVotacao.isEmpty()) {
+		if (restaurante.isPresent() && restaurante.get().getEstado().equals(Estado.DISPONIVEL)) {
 			Funcionario funcionario = funcionarioRepositorio.findByEmail(funcionarioForm.getEmail());
-			if (funcionario != null && !funcionario.isVoto()) {
-				Votacao votacao = new Votacao(funcionario, restaurante.get());
-				votacaoRepositorio.saveAndFlush(votacao);
-				funcionario.setVoto(true);
+			if (validarVoto(funcionario)) {
+				criarVoto(funcionario, restaurante.get());
 				restaurante.get().setNumeroVotos(restaurante.get().getNumeroVotos() + 1);
+				funcionario.setVoto(true);
+			} else {
+				return restauranteVencedor();
 			}
-			return restaurante.get();
+		}
+		return restaurante.get();
+	}
+
+	private void recomecarVotacaoRestaurante(List<Restaurante> restaurantesVencedores) {
+		LocalDate data = LocalDate.now();
+		DayOfWeek diaSemana = data.getDayOfWeek();
+		if ((!diaSemana.toString().equals("SATURDAY")) || (!diaSemana.toString().equals("SUNDAY"))) {
+			for (int i = 0; i < restaurantesVencedores.size(); i++) {
+				restaurantesVencedores.get(i).setEstado(Estado.DISPONIVEL);
+			}
+		}
+		System.out.println("AQUI: " + restaurantesVencedores.toString());
+	}
+
+	private Restaurante restauranteVencedor() {
+		LocalDate data = LocalDate.now();
+		Restaurante vencedor = restauranteRepositorio.findAllByOrderByNumeroVotosDesc().get(0);
+		vencedor.setDataVitoria(data);
+		vencedor.setEstado(Estado.INDISPONIVEL);
+		vencedor.setNumeroVotos(0);
+		limparVotosFuncionario();
+		limparVotosRestaurantes();
+		return vencedor;
+	}
+
+	private void criarVoto(Funcionario funcionario, Restaurante restaurante) {
+		Votacao voto = new Votacao();
+		voto.setFuncionario(funcionario);
+		voto.setRestaurante(restaurante);
+		votacaoRepositorio.saveAndFlush(voto);
+	}
+
+	private boolean validarVoto(Funcionario funcionario) {
+		boolean valido = false;
+		LocalDate data = LocalDate.now();
+		DayOfWeek diaSemana = data.getDayOfWeek();
+		
+		List<Restaurante> restaurantesVencedores = restauranteRepositorio.findByEstado(Estado.INDISPONIVEL);
+
+		if ((!diaSemana.toString().equals("SATURDAY")) || (!diaSemana.toString().equals("SUNDAY"))) {
+			Restaurante vencedor = restauranteRepositorio.findAllByOrderByDataVitoriaDesc().get(0);
+			LocalDate dataVitoriaRestaurante = pegaDataRestaurante(vencedor);
+			if (!data.equals(dataVitoriaRestaurante)) {
+				if (!funcionario.isVoto() && restaurantesVencedores.size() <= 4) {
+					valido = true;
+				} else {
+					recomecarVotacaoRestaurante(restaurantesVencedores);
+					valido = true;
+				}
+			}
+			return valido;
 		} else {
-			List<Restaurante> listaRestauranteVencedor = restauranteRepositorio.findAllByOrderByNumeroVotosAsc();
-			Restaurante vencedor = listaRestauranteVencedor.get(listaRestauranteVencedor.size() - 1);
-			restaurante.get().setEstado(Estado.INDISPONIVEL);
-			restaurante.get().setNumeroVotos(0);
-			limparVotosFuncionario(); 
-			limparVotosRestaurantes();
-			return vencedor;
+			return valido;
 		}
 	}
-	
+
+	private LocalDate pegaDataRestaurante(Restaurante restaurante) {
+		LocalDate dataVotacao = restaurante.getDataVitoria();
+		return dataVotacao;
+	}
+
 	private void limparVotosFuncionario() {
 		List<Funcionario> listaLimparVotos = funcionarioRepositorio.findAll();
-		for(int i = 0; i < listaLimparVotos.size(); i++) {
+		for (int i = 0; i < listaLimparVotos.size(); i++) {
 			listaLimparVotos.get(i).setVoto(false);
 		}
 	}
-	
+
 	private void limparVotosRestaurantes() {
 		List<Restaurante> listaLimparVotos = restauranteRepositorio.findByEstado(Estado.DISPONIVEL);
-		for(int i = 0; i < listaLimparVotos.size(); i++) {
+		for (int i = 0; i < listaLimparVotos.size(); i++) {
 			listaLimparVotos.get(i).setNumeroVotos(0);
 		}
-		
 	}
-
 
 }
