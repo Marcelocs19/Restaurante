@@ -38,7 +38,7 @@ public class RestauranteServico {
 	public Restaurante votar(Long id, @Valid FuncionarioForm funcionarioForm) {
 		Optional<Restaurante> restaurante = restauranteRepositorio.findById(id);
 
-		if (restaurante.isPresent()) {
+		if (restaurante.isPresent() && restaurante.get().getEstado().equals(Estado.DISPONIVEL)) {
 			Funcionario funcionario = funcionarioRepositorio.findByEmail(funcionarioForm.getEmail());
 			if (validarVoto(funcionario)) {
 				criarVoto(funcionario, restaurante.get());
@@ -71,7 +71,7 @@ public class RestauranteServico {
 
 	private boolean validarVoto(Funcionario funcionario) {
 		boolean valido = false;		
-		LocalDate data = LocalDate.now();	
+		LocalDate data = LocalDate.now();		
 		List<Restaurante> restauranteVencedor = restauranteRepositorio.findByDataVitoria(data);
 		if (restauranteVencedor.isEmpty()) {
 			if (!funcionario.isVoto()) {
@@ -90,8 +90,7 @@ public class RestauranteServico {
 	}
 	
 	private LocalDate pegaDataRestaurante(Restaurante restaurante) {
-		LocalDate dataVotacao = restaurante.getDataVitoria();
-		System.out.println("PEGADATA: " + restaurante.getDataVitoria());		
+		LocalDate dataVotacao = restaurante.getDataVitoria();		
 		return dataVotacao;
 	}
 
@@ -108,7 +107,6 @@ public class RestauranteServico {
 		for (int i = 0; i < listaLimparVotos.size(); i++) {
 			listaLimparVotos.get(i).setNumeroVotos(0);
 		}
-
 	}
 
 }

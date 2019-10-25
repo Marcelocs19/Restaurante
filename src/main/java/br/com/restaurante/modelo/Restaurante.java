@@ -48,6 +48,17 @@ public class Restaurante implements Serializable {
 		this.nome = nome;
 		this.estado = estado;
 		this.numeroVotos = numeroVotos;
+	}
+
+	public Restaurante(@NotBlank(message = "O campo nome é obrigatório.") String nome, Estado estado,
+			LocalDate dataVitoria, int numeroVotos) {
+		super();
+		this.nome = nome;
+		this.estado = estado;
+		this.dataVitoria = dataVitoria;
+		this.numeroVotos = numeroVotos;
 	}	
+	
+	
 	
 }
