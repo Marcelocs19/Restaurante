@@ -2,6 +2,7 @@ package br.com.restaurante.servico;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,11 +34,12 @@ public class RestauranteServico {
 	private FuncionarioRepositorio funcionarioRepositorio;
 
 	public List<RestauranteDto> listaRestaurantesDisponiveis() {
-		return RestauranteDto.convertMoviesToDto(restauranteRepositorio.findAllByOrderByNumeroVotosDesc());
+		return RestauranteDto.converterRestauranteParaDto(restauranteRepositorio.findAllByOrderByNumeroVotosDesc());
 	}
 
-	public Restaurante votar(Long id, @Valid FuncionarioForm funcionarioForm) {
+	public List<RestauranteDto> votar(Long id, @Valid FuncionarioForm funcionarioForm) {
 		Optional<Restaurante> restaurante = restauranteRepositorio.findById(id);
+		List<Restaurante> restauranteVencendor = new ArrayList<>();
 		if (restaurante.isPresent() && restaurante.get().getEstado().equals(Estado.DISPONIVEL)) {
 			Funcionario funcionario = funcionarioRepositorio.findByEmail(funcionarioForm.getEmail());
 			if (validarVoto(funcionario)) {
@@ -45,10 +47,13 @@ public class RestauranteServico {
 				restaurante.get().setNumeroVotos(restaurante.get().getNumeroVotos() + 1);
 				funcionario.setVoto(true);
 			} else {
-				return restauranteVencedor();
+				return listaRestaurantesDisponiveis();
 			}
+			restauranteVencendor.add(restauranteVencedor());
+			return RestauranteDto.converterRestauranteParaDto(restauranteVencendor);
+		}else {
+			return listaRestaurantesDisponiveis();
 		}
-		return restaurante.get();
 	}
 
 	private void recomecarVotacaoRestaurante(List<Restaurante> restaurantesVencedores) {
@@ -59,7 +64,6 @@ public class RestauranteServico {
 				restaurantesVencedores.get(i).setEstado(Estado.DISPONIVEL);
 			}
 		}
-		System.out.println("AQUI: " + restaurantesVencedores.toString());
 	}
 
 	private Restaurante restauranteVencedor() {
@@ -105,8 +109,7 @@ public class RestauranteServico {
 	}
 
 	private LocalDate pegaDataRestaurante(Restaurante restaurante) {
-		LocalDate dataVotacao = restaurante.getDataVitoria();
-		return dataVotacao;
+		return restaurante.getDataVitoria();
 	}
 
 	private void limparVotosFuncionario() {

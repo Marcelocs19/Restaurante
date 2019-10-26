@@ -109,7 +109,7 @@ public class RestauranteControladorTeste {
 
 	@Test
 	public void testeListarTodosRestaurantesDisponiveisSucesso() throws Exception {
-		listaRestauranteDto.addAll(RestauranteDto.convertMoviesToDto(listaRestaurante));
+		listaRestauranteDto.addAll(RestauranteDto.converterRestauranteParaDto(listaRestaurante));
 		given(this.restauranteServico.listaRestaurantesDisponiveis()).willReturn(listaRestauranteDto);
 		mockMvc.perform(get(LISTA_RESTAURANTE).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
 				.andExpect(jsonPath("$.[0].id").value(TESTE1_ID_RESTAURANTE))
@@ -143,7 +143,7 @@ public class RestauranteControladorTeste {
 	
 	@Test
 	public void testeVotarRestauranteSucesso() throws Exception {
-		listaRestauranteDto.addAll(RestauranteDto.convertMoviesToDto(listaRestaurante));
+		listaRestauranteDto.addAll(RestauranteDto.converterRestauranteParaDto(listaRestaurante));
 		given(this.restauranteServico.listaRestaurantesDisponiveis()).willReturn(listaRestauranteDto);		
 		given(this.funcionarioRepositorio.findAll()).willReturn(listaFuncionario);
 		

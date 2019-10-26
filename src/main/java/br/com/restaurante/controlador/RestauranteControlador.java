@@ -1,14 +1,12 @@
 package br.com.restaurante.controlador;
 
-import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,14 +19,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.restaurante.dto.RestauranteDto;
 import br.com.restaurante.form.FuncionarioForm;
-import br.com.restaurante.modelo.Restaurante;
 import br.com.restaurante.servico.RestauranteServico;
 
 @RestController
 @RequestMapping("/restaurantes")
 public class RestauranteControlador {
 
-	private static final String ID_RESTAURANTE = "/{id}";
 	private static final String VOTAR_RESTAURANTE = "/votar/{id}";
 
 	@Autowired
@@ -46,19 +42,14 @@ public class RestauranteControlador {
 
 	@PostMapping(VOTAR_RESTAURANTE)
 	@Transactional
-	public ResponseEntity<RestauranteDto> votarRestaurante(@PathVariable(name = "id") Long id,
+	public ResponseEntity<List<RestauranteDto>> votarRestaurante(@PathVariable(name = "id") Long id,
 			@RequestBody @Valid FuncionarioForm funcionarioForm, BindingResult bindingResult, UriComponentsBuilder uriBuilder) {
-		HttpHeaders headers = new HttpHeaders();
+		List<RestauranteDto> listaRestaurante = new ArrayList<>();
 		if (!bindingResult.hasErrors()) {
-			Restaurante restaurante = this.restauranteServico.votar(id,funcionarioForm);
-			RestauranteDto restauranteDto = new RestauranteDto(restaurante);
-			URI uri = uriBuilder.path(ID_RESTAURANTE).buildAndExpand(restaurante.getId()).toUri();
-			headers.setLocation(uri);
-			return new ResponseEntity<RestauranteDto>(restauranteDto, headers, HttpStatus.OK);
-			
-		} else {
-			return new ResponseEntity<RestauranteDto>(headers, HttpStatus.NOT_FOUND);
+			listaRestaurante = this.restauranteServico.votar(id,funcionarioForm);
+			return ResponseEntity.notFound().build();
 		}
+		return ResponseEntity.ok().body(listaRestaurante);			
 	}
 
 }
