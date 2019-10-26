@@ -36,7 +36,7 @@ public class RestauranteDto {
 		return numeroVotos;
 	}
 	
-	public static List<RestauranteDto> convertMoviesToDto(List<Restaurante> listaRestaurantes) {
+	public static List<RestauranteDto> converterRestauranteParaDto(List<Restaurante> listaRestaurantes) {
 		return listaRestaurantes.stream().map(RestauranteDto::new).collect(Collectors.toList());
 	}
 	

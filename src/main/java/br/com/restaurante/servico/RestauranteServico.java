@@ -2,6 +2,7 @@ package br.com.restaurante.servico;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,22 +34,31 @@ public class RestauranteServico {
 	private FuncionarioRepositorio funcionarioRepositorio;
 
 	public List<RestauranteDto> listaRestaurantesDisponiveis() {
-		return RestauranteDto.convertMoviesToDto(restauranteRepositorio.findAllByOrderByNumeroVotosDesc());
+		return RestauranteDto.converterRestauranteParaDto(restauranteRepositorio.findAllByOrderByNumeroVotosDesc());
 	}
 
-	public Restaurante votar(Long id, @Valid FuncionarioForm funcionarioForm) {
+	public List<RestauranteDto> votar(Long id, @Valid FuncionarioForm funcionarioForm) {
 		Optional<Restaurante> restaurante = restauranteRepositorio.findById(id);
+		List<Restaurante> restauranteVencendor = new ArrayList<>();
 		if (restaurante.isPresent() && restaurante.get().getEstado().equals(Estado.DISPONIVEL)) {
 			Funcionario funcionario = funcionarioRepositorio.findByEmail(funcionarioForm.getEmail());
 			if (validarVoto(funcionario)) {
 				criarVoto(funcionario, restaurante.get());
 				restaurante.get().setNumeroVotos(restaurante.get().getNumeroVotos() + 1);
 				funcionario.setVoto(true);
+				return listaRestaurantesDisponiveis();
 			} else {
-				return restauranteVencedor();
+				List<Funcionario> funcionariosFaltamVotar = funcionarioRepositorio.findByVoto(false);
+				if(funcionariosFaltamVotar.isEmpty()) {
+					restauranteVencendor.add(restauranteVencedor());
+					return RestauranteDto.converterRestauranteParaDto(restauranteVencendor);
+				}else {
+					return listaRestaurantesDisponiveis();
+				}				
 			}
+		} else {
+			return listaRestaurantesDisponiveis();
 		}
-		return restaurante.get();
 	}
 
 	private void recomecarVotacaoRestaurante(List<Restaurante> restaurantesVencedores) {
@@ -59,7 +69,6 @@ public class RestauranteServico {
 				restaurantesVencedores.get(i).setEstado(Estado.DISPONIVEL);
 			}
 		}
-		System.out.println("AQUI: " + restaurantesVencedores.toString());
 	}
 
 	private Restaurante restauranteVencedor() {
@@ -81,21 +90,20 @@ public class RestauranteServico {
 	}
 
 	private boolean validarVoto(Funcionario funcionario) {
-		boolean valido = false;
+		boolean valido = false;	
 		LocalDate data = LocalDate.now();
 		DayOfWeek diaSemana = data.getDayOfWeek();
 		
 		List<Restaurante> restaurantesVencedores = restauranteRepositorio.findByEstado(Estado.INDISPONIVEL);
-
-		if ((!diaSemana.toString().equals("SATURDAY")) || (!diaSemana.toString().equals("SUNDAY"))) {
-			Restaurante vencedor = restauranteRepositorio.findAllByOrderByDataVitoriaDesc().get(0);
-			LocalDate dataVitoriaRestaurante = pegaDataRestaurante(vencedor);
-			if (!data.equals(dataVitoriaRestaurante)) {
-				if (!funcionario.isVoto() && restaurantesVencedores.size() <= 4) {
-					valido = true;
-				} else {
-					recomecarVotacaoRestaurante(restaurantesVencedores);
-					valido = true;
+		
+		if (!diaSemana.name().equals("SATURDAY") && !diaSemana.name().equals("SUNDAY")) {
+			if (primeiroVotacaoSemRestauranteVencedor(funcionario)) {
+				valido = primeiroVotacaoSemRestauranteVencedor(funcionario);
+			} else {
+				Restaurante vencedor = restauranteRepositorio.findAllByOrderByDataVitoriaDesc().get(0);
+				LocalDate dataVitoriaRestaurante = pegaDataRestaurante(vencedor);
+				if (!data.equals(dataVitoriaRestaurante)) {
+					valido = validaVotoFuncionario(restaurantesVencedores,funcionario);
 				}
 			}
 			return valido;
@@ -103,10 +111,34 @@ public class RestauranteServico {
 			return valido;
 		}
 	}
+	
+	private boolean validaVotoFuncionario(List<Restaurante> restaurantesVencedores, Funcionario funcionario) {
+		boolean valida = false;
+		if (!funcionario.isVoto() && restaurantesVencedores.size() <= 4) {
+			valida = true;
+		} else {
+			if (funcionario.isVoto()) {
+				valida = false;
+			} else {
+				recomecarVotacaoRestaurante(restaurantesVencedores);
+				valida = true;
+			}
+		}
+		return valida;
+	}
+
+	private boolean primeiroVotacaoSemRestauranteVencedor(Funcionario funcionario) {
+		boolean validar = false;
+		if (!funcionario.isVoto()) {
+			if (restauranteRepositorio.findAllByOrderByDataVitoriaDesc().get(0).getDataVitoria() == null) {
+				validar = true;
+			}
+		}
+		return validar;
+	}
 
 	private LocalDate pegaDataRestaurante(Restaurante restaurante) {
-		LocalDate dataVotacao = restaurante.getDataVitoria();
-		return dataVotacao;
+		return restaurante.getDataVitoria();
 	}
 
 	private void limparVotosFuncionario() {
