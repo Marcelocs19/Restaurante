@@ -47,9 +47,10 @@ public class RestauranteControlador {
 		List<RestauranteDto> listaRestaurante = new ArrayList<>();
 		if (!bindingResult.hasErrors()) {
 			listaRestaurante = this.restauranteServico.votar(id,funcionarioForm);
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.ok().body(listaRestaurante);	
+
 		}
-		return ResponseEntity.ok().body(listaRestaurante);			
+		return ResponseEntity.notFound().build();		
 	}
 
 }
