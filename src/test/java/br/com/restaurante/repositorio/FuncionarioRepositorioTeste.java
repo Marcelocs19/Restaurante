@@ -34,6 +34,8 @@ public class FuncionarioRepositorioTeste {
 	
 	@Before
 	public void antes() {
+		this.funcionarioRepositorio.deleteAll();
+		
 		funcionarioNovo = new Funcionario();
 		funcionarioNovo.setNome("Wiliam");
 		funcionarioNovo.setEmail("wiliam@email.com.br");
@@ -57,8 +59,7 @@ public class FuncionarioRepositorioTeste {
 	public void criarFuncionarioSucesso() throws Exception {			
 		assertThat(funcionarioNovo.getId()).isNotNull();
 		assertThat(funcionarioNovo.getNome()).isEqualTo("Wiliam");
-		assertThat(funcionarioNovo.getEmail()).isEqualTo("wiliam@email.com.br");
-		
+		assertThat(funcionarioNovo.getEmail()).isEqualTo("wiliam@email.com.br");		
 	}
 	
 	@Test
@@ -77,31 +78,31 @@ public class FuncionarioRepositorioTeste {
 	
 	@Test
 	public void buscarFuncionarioPorEmailSucesso() throws Exception {		
-		Funcionario busca = funcionarioRepositorio.findByEmail(funcionarioNovo.getEmail());		
+		Funcionario busca = this.funcionarioRepositorio.findByEmail(funcionarioNovo.getEmail());		
 		assertThat(busca.getEmail()).isEqualTo("wiliam@email.com.br");			
 	}
 	
 	@Test
 	public void buscarFuncionarioPorEmailErro() throws Exception {		
-		assertThat(funcionarioRepositorio.findByEmail("erro@email.com.br")).isNull();			
+		assertThat(this.funcionarioRepositorio.findByEmail("erro@email.com.br")).isNull();			
 	}		
 	
 	@Test
 	public void listaFuncionariosQueJaVotarao() throws Exception {
-		List<Funcionario> listaFuncionariosJaVotarao = funcionarioRepositorio.findByVoto(true);
+		List<Funcionario> listaFuncionariosJaVotarao = this.funcionarioRepositorio.findByVoto(true);
 		assertThat(listaFuncionariosJaVotarao.size()).isEqualTo(1);
 	}
 	
 	@Test
 	public void listaFuncionariosQueNãoVotarao() throws Exception {
-		List<Funcionario> listaFuncionariosJaVotarao = funcionarioRepositorio.findByVoto(false);
+		List<Funcionario> listaFuncionariosJaVotarao = this.funcionarioRepositorio.findByVoto(false);
 		assertThat(listaFuncionariosJaVotarao.size()).isEqualTo(1);
 	}
 	
 	@Test
 	public void removerFuncionario() throws Exception {
 		this.funcionarioRepositorio.delete(funcionarioNovo);			
-		assertThat(funcionarioRepositorio.findByEmail("wiliam@email.com.br")).isNull();
+		assertThat(this.funcionarioRepositorio.findByEmail("wiliam@email.com.br")).isNull();
 	}
 	
 
