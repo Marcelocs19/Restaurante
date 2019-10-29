@@ -2,6 +2,8 @@ package br.com.restaurante.repositorio;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import javax.validation.ConstraintViolationException;
 
 import org.junit.After;
@@ -28,6 +30,7 @@ public class FuncionarioRepositorioTeste {
 	public ExpectedException thrown = ExpectedException.none();
 	
 	private Funcionario funcionarioNovo;
+	private Funcionario funcionarioNovo2;
 	
 	@Before
 	public void antes() {
@@ -36,6 +39,13 @@ public class FuncionarioRepositorioTeste {
 		funcionarioNovo.setEmail("wiliam@email.com.br");
 		funcionarioNovo.setVoto(false);		
 		this.funcionarioRepositorio.saveAndFlush(funcionarioNovo);
+		
+		funcionarioNovo2 = new Funcionario();
+		funcionarioNovo2.setNome("Julia");
+		funcionarioNovo2.setEmail("julia@email.com.br");
+		funcionarioNovo2.setVoto(true);	
+		this.funcionarioRepositorio.saveAndFlush(funcionarioNovo2);
+		
 	}
 	
 	@After
@@ -75,6 +85,18 @@ public class FuncionarioRepositorioTeste {
 	public void buscarFuncionarioPorEmailErro() throws Exception {		
 		assertThat(funcionarioRepositorio.findByEmail("erro@email.com.br")).isNull();			
 	}		
+	
+	@Test
+	public void listaFuncionariosQueJaVotarao() throws Exception {
+		List<Funcionario> listaFuncionariosJaVotarao = funcionarioRepositorio.findByVoto(true);
+		assertThat(listaFuncionariosJaVotarao.size()).isEqualTo(1);
+	}
+	
+	@Test
+	public void listaFuncionariosQueNãoVotarao() throws Exception {
+		List<Funcionario> listaFuncionariosJaVotarao = funcionarioRepositorio.findByVoto(false);
+		assertThat(listaFuncionariosJaVotarao.size()).isEqualTo(1);
+	}
 	
 	@Test
 	public void removerFuncionario() throws Exception {
