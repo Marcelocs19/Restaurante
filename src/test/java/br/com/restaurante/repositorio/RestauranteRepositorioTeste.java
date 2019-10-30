@@ -170,8 +170,7 @@ public class RestauranteRepositorioTeste {
 	@Test
 	public void removerRestaurante() throws Exception {
 		this.restauranteRepositorio.delete(restauranteNovo3);
-		System.out.println("AQUI: " + this.restauranteRepositorio.findAll());
-		assertThat(this.restauranteRepositorio.getOne(restauranteNovo3.getId())).isNull();
+		assertThat(restauranteRepositorio.findAll().size()).isEqualTo(4);
 	}
 	
 }
