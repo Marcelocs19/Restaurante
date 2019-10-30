@@ -40,12 +40,14 @@ public class FuncionarioRepositorioTeste {
 		funcionarioNovo.setNome("Wiliam");
 		funcionarioNovo.setEmail("wiliam@email.com.br");
 		funcionarioNovo.setVoto(false);		
+		
 		this.funcionarioRepositorio.saveAndFlush(funcionarioNovo);
 		
 		funcionarioNovo2 = new Funcionario();
 		funcionarioNovo2.setNome("Julia");
 		funcionarioNovo2.setEmail("julia@email.com.br");
 		funcionarioNovo2.setVoto(true);	
+		
 		this.funcionarioRepositorio.saveAndFlush(funcionarioNovo2);
 		
 	}
