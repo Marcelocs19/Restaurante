@@ -17,7 +17,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
 
 import br.com.restaurante.RestauranteApplication;
 import br.com.restaurante.dto.RestauranteDto;
@@ -52,6 +51,7 @@ public class RestauranteServicoTeste {
 
 	private Funcionario funcionario1;
 	private Funcionario funcionario2;
+	private Funcionario funcionario3;
 
 	private Restaurante restaurante1;
 	private Restaurante restaurante2;
@@ -109,6 +109,12 @@ public class RestauranteServicoTeste {
 		funcionario2.setEmail("teste2@email.com");
 		funcionario2.setNome("Teste2");
 		funcionario2.setVoto(false);
+		
+		funcionario3 = new Funcionario();
+		funcionario3.setId(8L);
+		funcionario3.setEmail("teste3@email.com");
+		funcionario3.setNome("Teste3");
+		funcionario3.setVoto(true);
 
 		LocalDate dataVoto = LocalDate.of(2019, 10, 31);
 		votacao1 = new Votacao();
@@ -182,4 +188,34 @@ public class RestauranteServicoTeste {
 		assertThat(listaRestaurantesVoto.get(2).getNome()).isEqualTo("Churrascaria Freio de Ouro");
 	}
 
+	@Test
+	public void testeVotarRestauranteErroFuncionarioJaVotou() throws Exception {	
+		listaRestauranteDisponiveis.addAll(Arrays.asList(restaurante1, restaurante3, restaurante2));
+		when(restauranteRepositorioMock.findAllByOrderByNumeroVotosDesc()).thenReturn(listaRestauranteDisponiveis);
+		
+		Optional<Restaurante> restaurante = Optional.empty();
+		restaurante = Optional.of(restaurante2);
+		when(restauranteRepositorioMock.findById(restaurante2.getId())).thenReturn(restaurante);
+		
+		listaRestauranteIndisponiveis.add(restaurante4);
+		when(restauranteRepositorioMock.findByEstado(INDISPONIVEL)).thenReturn(listaRestauranteIndisponiveis);
+		
+		listaRestauranteVitoria.add(restaurante4);
+		when(restauranteRepositorioMock.findAllByOrderByDataVitoriaDesc()).thenReturn(listaRestauranteVitoria);
+		
+		listaFuncionario.addAll(Arrays.asList(funcionario1, funcionario2));
+		when(funcionarioRepositorio.findByVoto(false)).thenReturn(listaFuncionario);
+		
+		FuncionarioForm funcionarioForm = new FuncionarioForm();
+		funcionarioForm.setEmail("teste3@email.com");
+		funcionarioForm.setNome("Teste3");
+		when(funcionarioRepositorio.findByEmail("teste3@email.com")).thenReturn(funcionario3);
+
+		List<RestauranteDto> listaRestaurantesVoto = restauranteServico.votar(2L, funcionarioForm);
+		
+		assertThat(listaRestaurantesVoto.get(0).getNome()).isEqualTo("Pizzaria Fragata");
+		assertThat(listaRestaurantesVoto.get(1).getNome()).isEqualTo("Restaurante Panorama");
+		assertThat(listaRestaurantesVoto.get(2).getNome()).isEqualTo("Churrascaria Freio de Ouro");
+	}
+	
 }
