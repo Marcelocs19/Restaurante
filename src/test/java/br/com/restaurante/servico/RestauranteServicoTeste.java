@@ -219,6 +219,25 @@ public class RestauranteServicoTeste {
 		assertThat(listaRestaurantesVoto.get(1).getNome()).isEqualTo("Restaurante Panorama");
 		assertThat(listaRestaurantesVoto.get(2).getNome()).isEqualTo("Churrascaria Freio de Ouro");
 	}
+	
+	@Test
+	public void testeVotarRestauranteErroFuncionarioNãoEncontrado() throws Exception {		
+		listaRestauranteDisponiveis.addAll(Arrays.asList(restaurante1, restaurante3, restaurante2));
+		when(restauranteRepositorioMock.findAllByOrderByNumeroVotosDesc()).thenReturn(listaRestauranteDisponiveis);
+		
+		FuncionarioForm funcionarioForm = new FuncionarioForm();
+		funcionarioForm.setEmail("abc@email.com");
+		funcionarioForm.setNome("Abc");
+
+		List<RestauranteDto> listaRestaurantesVoto = restauranteServico.votar(2L, funcionarioForm);
+
+		assertThat(listaRestaurantesVoto.get(0).getNome()).isEqualTo("Pizzaria Fragata");
+		assertThat(listaRestaurantesVoto.get(0).getNumeroVotos()).isEqualTo(3);
+		assertThat(listaRestaurantesVoto.get(1).getNome()).isEqualTo("Restaurante Panorama");
+		assertThat(listaRestaurantesVoto.get(1).getNumeroVotos()).isEqualTo(2);
+		assertThat(listaRestaurantesVoto.get(2).getNome()).isEqualTo("Churrascaria Freio de Ouro");
+		assertThat(listaRestaurantesVoto.get(2).getNumeroVotos()).isEqualTo(1);
+	}
 
 	@Test
 	public void testeVotarRestauranteErroFuncionarioJaVotou() throws Exception {	

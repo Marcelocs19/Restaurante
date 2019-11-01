@@ -41,6 +41,15 @@ Ou você pode rodar a aplicação pela linha de comando usando:
 mvn spring-boot:run
 ```
 
+### Funcionários inseridos no banco
+```
+"João","joao@email.com";
+"Pedro","pedro@email.com";
+"Maria","maria@email.com";
+"Ana","ana@email.com";
+"Paula","paula@email.com";
+```
+
 ### Rotas
 1. Método que lista todos os restaurantes com os votos:
 Get - http://localhost:8080/restaurantes
@@ -63,6 +72,20 @@ Exemplo json:
 
 3. Swagger
 Browser - http://localhost:8080/swagger-ui.html
+
+### MySQL Teste
+```
+1. create database restaurante_teste;
+```
+```
+2. create user 'userteste'@'%' identified by '123456';
+```
+```
+3. grant all on restaurante_teste.* to 'userteste'@'%';
+```
+```
+4. use restaurante_teste;
+```
 
 ## License
 
