@@ -1,4 +1,4 @@
-package br.com.restaurante.repositorio;
+package br.com.restaurante.testeunitario.repositorio;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import br.com.restaurante.RestauranteApplication;
 import br.com.restaurante.modelo.Funcionario;
+import br.com.restaurante.repositorio.FuncionarioRepositorio;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = RestauranteApplication.class)

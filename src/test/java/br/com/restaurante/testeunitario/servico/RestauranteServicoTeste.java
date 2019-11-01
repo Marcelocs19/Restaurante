@@ -1,4 +1,4 @@
-package br.com.restaurante.servico;
+package br.com.restaurante.testeunitario.servico;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -28,6 +28,7 @@ import br.com.restaurante.modelo.Votacao;
 import br.com.restaurante.repositorio.FuncionarioRepositorio;
 import br.com.restaurante.repositorio.RestauranteRepositorio;
 import br.com.restaurante.repositorio.VotacaoRepositorio;
+import br.com.restaurante.servico.RestauranteServico;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = RestauranteApplication.class)

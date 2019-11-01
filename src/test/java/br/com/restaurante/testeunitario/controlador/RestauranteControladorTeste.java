@@ -1,4 +1,4 @@
-package br.com.restaurante.controlador;
+package br.com.restaurante.testeunitario.controlador;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
