@@ -2,6 +2,7 @@ package br.com.restaurante.testeintegracao;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -20,8 +21,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import br.com.restaurante.RestauranteApplication;
+import br.com.restaurante.dto.RestauranteDto;
+import br.com.restaurante.form.FuncionarioForm;
 import br.com.restaurante.modelo.Estado;
+import br.com.restaurante.modelo.Funcionario;
 import br.com.restaurante.modelo.Restaurante;
 import br.com.restaurante.repositorio.FuncionarioRepositorio;
 import br.com.restaurante.repositorio.RestauranteRepositorio;
@@ -33,6 +39,7 @@ import br.com.restaurante.repositorio.VotacaoRepositorio;
 public class RestauranteControladorTesteIntegracao {
 
 	private static final String LISTA_RESTAURANTE = "/restaurantes";
+	private static final String VOTAR_RESTAURANTE = "/votar/{id}";
 	
 	private static final Long TESTE1_ID_RESTAURANTE = 1L;
 	private static final Long TESTE2_ID_RESTAURANTE = 2L;
@@ -54,12 +61,16 @@ public class RestauranteControladorTesteIntegracao {
 	@MockBean
 	private VotacaoRepositorio votacaoRepositorio;
 	
+	private Funcionario funcionario1;
+	
 	private Restaurante restaurante1;
 	private Restaurante restaurante2;
 	private Restaurante restaurante3;
 	private Restaurante restaurante4;
 
 	private List<Restaurante> listaRestaurante;
+	private List<RestauranteDto> listaRestauranteDto;
+	private List<Funcionario> listaFuncionario;
 
 	@Before
 	public void setup() {
@@ -116,5 +127,21 @@ public class RestauranteControladorTesteIntegracao {
 		mockMvc.perform(get(LISTA_RESTAURANTE).accept(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
 	}
 	
+	@Test
+	public void testeVotarRestauranteSucesso() throws Exception {
+		listaRestaurante.addAll(Arrays.asList(restaurante1, restaurante2, restaurante3));
+		when(restauranteRepositorioMock.findAllByOrderByNumeroVotosDesc()).thenReturn(listaRestaurante);				
+		
+		FuncionarioForm funcionarioForm = new FuncionarioForm();
+		funcionarioForm.setEmail(funcionario1.getEmail());
+		funcionarioForm.setNome(funcionario1.getNome());
+		ObjectMapper mapper = new ObjectMapper();
+		String funcionario = mapper.writeValueAsString(funcionarioForm);
+		
+		mockMvc.perform(post(VOTAR_RESTAURANTE)
+				.content(funcionario).accept(MediaType.APPLICATION_JSON_VALUE)
+				.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(status().isOk());
+	}	
 	
 }
