@@ -315,4 +315,41 @@ public class RestauranteServicoTeste {
 		
 	}
 	
+	@Test
+	public void testeVotarRestauranteGanhaNoDia() throws Exception {	
+		Optional<Restaurante> restaurante = Optional.empty();
+		restaurante = Optional.of(restaurante2);
+		when(restauranteRepositorioMock.findById(restaurante2.getId())).thenReturn(restaurante);
+		restaurante1.setNumeroVotos(2);
+		restaurante2.setNumeroVotos(0);
+		restaurante3.setNumeroVotos(0);
+		List<Restaurante> listaRestauranteOrdenadosPelosVotos = new ArrayList<>();
+		listaRestauranteOrdenadosPelosVotos.addAll(Arrays.asList(restaurante1, restaurante2, restaurante3));
+		when(restauranteRepositorioMock.findAllByOrderByNumeroVotosDesc()).thenReturn(listaRestauranteOrdenadosPelosVotos);
+		
+		listaRestauranteDisponiveis.addAll(Arrays.asList(restaurante2,restaurante3));
+		when(restauranteRepositorioMock.findByEstado(DISPONIVEL)).thenReturn(listaRestauranteDisponiveis);
+		
+		List<Restaurante> listaRestauranteVitoria = new ArrayList<>();
+		listaRestauranteVitoria.addAll(Arrays.asList(restaurante1,restaurante2,restaurante3));
+		when(restauranteRepositorioMock.findAllByOrderByDataVitoriaDesc()).thenReturn(listaRestauranteVitoria);
+				
+		List<Funcionario> listaFuncionarioVoto = new ArrayList<>();
+		when(funcionarioRepositorio.findByVoto(false)).thenReturn(listaFuncionarioVoto);		
+		
+		funcionario1.setVoto(true);
+		funcionario2.setVoto(true);
+		List<Funcionario> listaTodosFuncionarios = new ArrayList<>();
+		listaTodosFuncionarios.addAll(Arrays.asList(funcionario1,funcionario2));
+		
+		FuncionarioForm funcionarioForm = new FuncionarioForm();
+		funcionarioForm.setEmail(funcionario1.getEmail());
+		funcionarioForm.setNome(funcionario1.getEmail());
+		when(funcionarioRepositorio.findByEmail(funcionario1.getEmail())).thenReturn(funcionario1);
+		
+		List<RestauranteDto> listaRestaurantesVoto = restauranteServico.votar(2L, funcionarioForm);
+		assertThat(listaRestaurantesVoto.get(0).getNome()).isEqualTo("Pizzaria Fragata");
+		assertThat(listaRestaurantesVoto.get(0).getEstado()).isEqualTo(INDISPONIVEL);
+	}
+	
 }
