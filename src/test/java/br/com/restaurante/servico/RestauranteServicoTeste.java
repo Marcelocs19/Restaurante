@@ -52,7 +52,8 @@ public class RestauranteServicoTeste {
 	private Funcionario funcionario1;
 	private Funcionario funcionario2;
 	private Funcionario funcionario3;
-
+	private Funcionario funcionario4;
+	
 	private Restaurante restaurante1;
 	private Restaurante restaurante2;
 	private Restaurante restaurante3;
@@ -147,6 +148,13 @@ public class RestauranteServicoTeste {
 		funcionario3.setEmail("teste3@email.com");
 		funcionario3.setNome("Teste3");
 		funcionario3.setVoto(true);
+		
+		funcionario4 = new Funcionario();
+		funcionario4.setId(12L);
+		funcionario4.setEmail("teste4@email.com");
+		funcionario4.setNome("Teste4");
+		funcionario4.setVoto(false);
+		
 
 		LocalDate dataVoto = LocalDate.of(2019, 10, 31);
 		votacao1 = new Votacao();
@@ -290,12 +298,6 @@ public class RestauranteServicoTeste {
 		
 		listaFuncionario.addAll(Arrays.asList(funcionario1, funcionario2));
 		when(funcionarioRepositorio.findByVoto(false)).thenReturn(listaFuncionario);
-		
-		Funcionario funcionario4 = new Funcionario();
-		funcionario4.setEmail("teste4@email.com");
-		funcionario4.setNome("Teste4");
-		funcionario4.setVoto(false);
-		funcionario4.setId(12L);
 		
 		FuncionarioForm funcionarioForm = new FuncionarioForm();
 		funcionarioForm.setEmail("teste4@email.com");
