@@ -26,6 +26,9 @@ import br.com.restaurante.repositorio.RestauranteRepositorio;
 @SpringBootTest(classes = RestauranteApplication.class)
 public class RestauranteRepositorioTeste {
 	
+	private static final Estado DISPONIVEL = Estado.DISPONIVEL;
+	private static final Estado INDISPONIVEL = Estado.INDISPONIVEL;
+	
 	@Autowired
 	private RestauranteRepositorio restauranteRepositorio;
 	
@@ -44,28 +47,28 @@ public class RestauranteRepositorioTeste {
 		
 		restauranteNovo = new Restaurante();
 		restauranteNovo.setNome("Churrascaria");
-		restauranteNovo.setEstado(Estado.DISPONIVEL);
+		restauranteNovo.setEstado(DISPONIVEL);
 		restauranteNovo.setNumeroVotos(2);
 		
 		this.restauranteRepositorio.saveAndFlush(restauranteNovo);
 		
 		restauranteNovo2 = new Restaurante();
 		restauranteNovo2.setNome("Galeteria");
-		restauranteNovo2.setEstado(Estado.DISPONIVEL);
+		restauranteNovo2.setEstado(DISPONIVEL);
 		restauranteNovo2.setNumeroVotos(1);
 		
 		this.restauranteRepositorio.saveAndFlush(restauranteNovo2);
 		
 		restauranteNovo3 = new Restaurante();
 		restauranteNovo3.setNome("Pizzaria");
-		restauranteNovo3.setEstado(Estado.DISPONIVEL);
+		restauranteNovo3.setEstado(DISPONIVEL);
 		restauranteNovo3.setNumeroVotos(3);
 		
 		this.restauranteRepositorio.saveAndFlush(restauranteNovo3);
 		
 		restauranteNovo4 = new Restaurante();
 		restauranteNovo4.setNome("Casa de Massas");
-		restauranteNovo4.setEstado(Estado.INDISPONIVEL);
+		restauranteNovo4.setEstado(INDISPONIVEL);
 		LocalDate dataVitoria = LocalDate.of(2019, 10, 28);
 		restauranteNovo4.setDataVitoria(dataVitoria);
 		restauranteNovo4.setNumeroVotos(0);
@@ -74,7 +77,7 @@ public class RestauranteRepositorioTeste {
 		
 		restauranteNovo5 = new Restaurante();
 		restauranteNovo5.setNome("Hamburgueria");
-		restauranteNovo5.setEstado(Estado.INDISPONIVEL);
+		restauranteNovo5.setEstado(INDISPONIVEL);
 		LocalDate dataVitoria2 = LocalDate.of(2019, 10, 27);
 		restauranteNovo5.setDataVitoria(dataVitoria2);
 		restauranteNovo5.setNumeroVotos(0);
@@ -91,29 +94,29 @@ public class RestauranteRepositorioTeste {
 	public void criarRestauranteSucesso() throws Exception {			
 		assertThat(restauranteNovo.getId()).isNotNull();
 		assertThat(restauranteNovo.getNome()).isEqualTo("Churrascaria");
-		assertThat(restauranteNovo.getEstado()).isEqualTo(Estado.DISPONIVEL);
+		assertThat(restauranteNovo.getEstado()).isEqualTo(DISPONIVEL);
 		assertThat(restauranteNovo.getNumeroVotos()).isEqualTo(2);
 		
 		assertThat(restauranteNovo2.getId()).isNotNull();
 		assertThat(restauranteNovo2.getNome()).isEqualTo("Galeteria");
-		assertThat(restauranteNovo2.getEstado()).isEqualTo(Estado.DISPONIVEL);
+		assertThat(restauranteNovo2.getEstado()).isEqualTo(DISPONIVEL);
 		assertThat(restauranteNovo2.getNumeroVotos()).isEqualTo(1);
 		
 		assertThat(restauranteNovo3.getId()).isNotNull();
 		assertThat(restauranteNovo3.getNome()).isEqualTo("Pizzaria");
-		assertThat(restauranteNovo3.getEstado()).isEqualTo(Estado.DISPONIVEL);
+		assertThat(restauranteNovo3.getEstado()).isEqualTo(DISPONIVEL);
 		assertThat(restauranteNovo3.getNumeroVotos()).isEqualTo(3);
 		
 		assertThat(restauranteNovo4.getId()).isNotNull();
 		assertThat(restauranteNovo4.getNome()).isEqualTo("Casa de Massas");
-		assertThat(restauranteNovo4.getEstado()).isEqualTo(Estado.INDISPONIVEL);
+		assertThat(restauranteNovo4.getEstado()).isEqualTo(INDISPONIVEL);
 		LocalDate dataVitoria = LocalDate.of(2019, 10, 28);
 		assertThat(restauranteNovo4.getDataVitoria()).isEqualTo(dataVitoria);
 		assertThat(restauranteNovo4.getNumeroVotos()).isEqualTo(0);
 		
 		assertThat(restauranteNovo5.getId()).isNotNull();
 		assertThat(restauranteNovo5.getNome()).isEqualTo("Hamburgueria");
-		assertThat(restauranteNovo5.getEstado()).isEqualTo(Estado.INDISPONIVEL);
+		assertThat(restauranteNovo5.getEstado()).isEqualTo(INDISPONIVEL);
 		LocalDate dataVitoria2 = LocalDate.of(2019, 10, 27);
 		assertThat(restauranteNovo5.getDataVitoria()).isEqualTo(dataVitoria2);
 		assertThat(restauranteNovo5.getNumeroVotos()).isEqualTo(0);
@@ -124,7 +127,7 @@ public class RestauranteRepositorioTeste {
 	public void criarRestauranteNomeErro() throws Exception {	
 		thrown.expect(ConstraintViolationException.class);
 		thrown.expectMessage("O campo nome é obrigatório.");
-		this.restauranteRepositorio.saveAndFlush(new Restaurante("",Estado.DISPONIVEL,0));		
+		this.restauranteRepositorio.saveAndFlush(new Restaurante("",DISPONIVEL,0));		
 	}
 	
 	@Test
@@ -158,13 +161,13 @@ public class RestauranteRepositorioTeste {
 
 	@Test
 	public void listaRestaurantesPeloEstadoDisponivel() throws Exception {
-		List<Restaurante> listaRestaurantes = this.restauranteRepositorio.findByEstado(Estado.DISPONIVEL);
+		List<Restaurante> listaRestaurantes = this.restauranteRepositorio.findByEstado(DISPONIVEL);
 		assertThat(listaRestaurantes.size()).isEqualTo(3);
 	}
 	
 	@Test
 	public void listaRestaurantesPeloEstadoIndisponiveis() throws Exception {
-		List<Restaurante> listaRestaurantes = this.restauranteRepositorio.findByEstado(Estado.INDISPONIVEL);
+		List<Restaurante> listaRestaurantes = this.restauranteRepositorio.findByEstado(INDISPONIVEL);
 		assertThat(listaRestaurantes.size()).isEqualTo(2);
 	}
 	
