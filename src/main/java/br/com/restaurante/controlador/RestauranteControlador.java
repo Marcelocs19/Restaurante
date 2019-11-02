@@ -1,6 +1,5 @@
 package br.com.restaurante.controlador;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -44,7 +43,7 @@ public class RestauranteControlador {
 	@Transactional
 	public ResponseEntity<List<RestauranteDto>> votarRestaurante(@PathVariable(name = "id") Long id,
 			@RequestBody @Valid FuncionarioForm funcionarioForm, BindingResult bindingResult, UriComponentsBuilder uriBuilder) {
-		List<RestauranteDto> listaRestaurante = new ArrayList<>();
+		List<RestauranteDto> listaRestaurante;
 		if (!bindingResult.hasErrors()) {
 			listaRestaurante = this.restauranteServico.votar(id,funcionarioForm);
 			return ResponseEntity.ok().body(listaRestaurante);	
