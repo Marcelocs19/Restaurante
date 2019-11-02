@@ -16,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import br.com.restaurante.RestauranteApplication;
 import br.com.restaurante.modelo.Estado;
 import br.com.restaurante.modelo.Funcionario;
 import br.com.restaurante.modelo.Restaurante;
@@ -25,7 +24,7 @@ import br.com.restaurante.repositorio.RestauranteRepositorio;
 import br.com.restaurante.repositorio.VotacaoRepositorio;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = RestauranteApplication.class)
+@SpringBootTest
 @AutoConfigureMockMvc
 public class RestauranteControladorTesteIntegracao {
 

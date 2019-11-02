@@ -14,16 +14,17 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import br.com.restaurante.RestauranteApplication;
 import br.com.restaurante.modelo.Estado;
 import br.com.restaurante.modelo.Restaurante;
 import br.com.restaurante.repositorio.RestauranteRepositorio;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = RestauranteApplication.class)
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class RestauranteRepositorioTeste {
 	
 	private static final Estado DISPONIVEL = Estado.DISPONIVEL;
@@ -127,7 +128,7 @@ public class RestauranteRepositorioTeste {
 	public void criarRestauranteNomeErro() throws Exception {	
 		thrown.expect(ConstraintViolationException.class);
 		thrown.expectMessage("O campo nome é obrigatório.");
-		this.restauranteRepositorio.saveAndFlush(new Restaurante("",DISPONIVEL,0));		
+		this.restauranteRepositorio.save(new Restaurante("",DISPONIVEL,0));		
 	}
 	
 	@Test

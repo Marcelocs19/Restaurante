@@ -13,15 +13,16 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import br.com.restaurante.RestauranteApplication;
 import br.com.restaurante.modelo.Funcionario;
 import br.com.restaurante.repositorio.FuncionarioRepositorio;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = RestauranteApplication.class)
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class FuncionarioRepositorioTeste {
 	
 	@Autowired
@@ -69,14 +70,14 @@ public class FuncionarioRepositorioTeste {
 	public void criarFuncionarioNomeErro() throws Exception {	
 		thrown.expect(ConstraintViolationException.class);
 		thrown.expectMessage("O campo nome é obrigatório.");
-		this.funcionarioRepositorio.saveAndFlush(new Funcionario("","teste@email.com",false));		
+		this.funcionarioRepositorio.save(new Funcionario("","teste@email.com",false));		
 	}
 	
 	@Test
 	public void criarFuncionarioEmailErro() throws Exception {	
 		thrown.expect(ConstraintViolationException.class);
 		thrown.expectMessage("O campo e-mail é obrigatório.");
-		this.funcionarioRepositorio.saveAndFlush(new Funcionario("Teste","",false));		
+		this.funcionarioRepositorio.save(new Funcionario("Teste","",false));		
 	}	
 	
 	@Test

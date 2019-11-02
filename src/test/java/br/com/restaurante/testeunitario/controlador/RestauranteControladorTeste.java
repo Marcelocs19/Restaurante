@@ -26,7 +26,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.restaurante.RestauranteApplication;
 import br.com.restaurante.controlador.RestauranteControlador;
 import br.com.restaurante.dto.RestauranteDto;
 import br.com.restaurante.form.FuncionarioForm;
@@ -36,7 +35,7 @@ import br.com.restaurante.modelo.Restaurante;
 import br.com.restaurante.servico.RestauranteServico;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = RestauranteApplication.class)
+@SpringBootTest
 @AutoConfigureMockMvc
 public class RestauranteControladorTeste {
 

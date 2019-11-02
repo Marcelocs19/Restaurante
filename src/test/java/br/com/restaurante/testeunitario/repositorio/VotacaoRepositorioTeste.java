@@ -10,10 +10,10 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import br.com.restaurante.RestauranteApplication;
 import br.com.restaurante.modelo.Estado;
 import br.com.restaurante.modelo.Funcionario;
 import br.com.restaurante.modelo.Restaurante;
@@ -23,7 +23,8 @@ import br.com.restaurante.repositorio.RestauranteRepositorio;
 import br.com.restaurante.repositorio.VotacaoRepositorio;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = RestauranteApplication.class)
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class VotacaoRepositorioTeste {
 	
 

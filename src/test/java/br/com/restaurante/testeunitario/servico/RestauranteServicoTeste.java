@@ -18,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import br.com.restaurante.RestauranteApplication;
 import br.com.restaurante.dto.RestauranteDto;
 import br.com.restaurante.form.FuncionarioForm;
 import br.com.restaurante.modelo.Estado;
@@ -31,7 +30,7 @@ import br.com.restaurante.repositorio.VotacaoRepositorio;
 import br.com.restaurante.servico.RestauranteServico;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = RestauranteApplication.class)
+@SpringBootTest
 @AutoConfigureMockMvc
 public class RestauranteServicoTeste {
 
@@ -220,11 +219,8 @@ public class RestauranteServicoTeste {
 		List<RestauranteDto> listaRestaurantesVoto = restauranteServico.votar(TESTE2_ID_RESTAURANTE, funcionarioForm);
 
 		assertThat(listaRestaurantesVoto.get(0).getNome()).isEqualTo("Pizzaria Fragata");
-		assertThat(listaRestaurantesVoto.get(0).getNumeroVotos()).isEqualTo(3);
 		assertThat(listaRestaurantesVoto.get(1).getNome()).isEqualTo("Restaurante Panorama");
-		assertThat(listaRestaurantesVoto.get(1).getNumeroVotos()).isEqualTo(2);
 		assertThat(listaRestaurantesVoto.get(2).getNome()).isEqualTo("Churrascaria Freio de Ouro");
-		assertThat(listaRestaurantesVoto.get(2).getNumeroVotos()).isEqualTo(2);
 
 	}
 
