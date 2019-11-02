@@ -1,11 +1,13 @@
 package br.com.restaurante.testeintegracao;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import br.com.restaurante.form.FuncionarioForm;
 import br.com.restaurante.modelo.Estado;
 import br.com.restaurante.modelo.Funcionario;
 import br.com.restaurante.modelo.Restaurante;
@@ -26,9 +31,10 @@ import br.com.restaurante.repositorio.VotacaoRepositorio;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class RestauranteControladorTesteIntegracao {
+public class RestauranteControladorIntegracaoTeste {
 
 	private static final String LISTA_RESTAURANTE = "/restaurantes";
+	private static final String VOTAR_RESTAURANTE = "/restaurantes/votar/";
 		
 	private static final Estado DISPONIVEL = Estado.DISPONIVEL;
 	private static final Estado INDISPONIVEL = Estado.INDISPONIVEL;
@@ -54,11 +60,7 @@ public class RestauranteControladorTesteIntegracao {
 	private Restaurante restaurante5;
 
 	@Before
-	public void antes() {
-		this.restauranteRepositorio.deleteAll();
-		this.funcionarioRepositorio.deleteAll();
-		this.votacaoRepositorio.deleteAll();
-		
+	public void antes() {		
 		restaurante1 = new Restaurante();
 		restaurante1.setNome("Pizzaria Fragata");
 		restaurante1.setEstado(DISPONIVEL);
@@ -81,7 +83,7 @@ public class RestauranteControladorTesteIntegracao {
 		this.restauranteRepositorio.saveAndFlush(restaurante3);
 		
 		restaurante4 = new Restaurante();
-		restaurante4.setNome("Silva Lanches");
+		restaurante4.setNome("Lanches");
 		restaurante4.setEstado(DISPONIVEL);
 		restaurante4.setNumeroVotos(0);
 		
@@ -105,6 +107,13 @@ public class RestauranteControladorTesteIntegracao {
 		
 	}	
 	
+	@After
+	public void depois() {
+		this.restauranteRepositorio.deleteAll();
+		this.funcionarioRepositorio.deleteAll();
+		this.votacaoRepositorio.deleteAll();
+	}
+	
 	@Test
 	public void testeListarTodosRestaurantesDisponiveisSucesso() throws Exception {
 		mockMvc.perform(get(LISTA_RESTAURANTE).accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
@@ -118,7 +127,7 @@ public class RestauranteControladorTesteIntegracao {
 				.andExpect(jsonPath("$.[2].nome").value("Restaurante Panorama"))
 				.andExpect(jsonPath("$.[2].estado").value(DISPONIVEL.toString()))
 				.andExpect(jsonPath("$.[3].id").value(restaurante4.getId()))
-				.andExpect(jsonPath("$.[3].nome").value("Silva Lanches"))
+				.andExpect(jsonPath("$.[3].nome").value("Lanches"))
 				.andExpect(jsonPath("$.[3].estado").value(DISPONIVEL.toString()));
 	}
 	
@@ -127,6 +136,34 @@ public class RestauranteControladorTesteIntegracao {
 		this.restauranteRepositorio.deleteAll();
 		mockMvc.perform(get(LISTA_RESTAURANTE).accept(MediaType.APPLICATION_JSON)).andExpect(status().isNotFound());
 	}
+	
+	@Test
+	public void testeVotarRestauranteSucesso() throws Exception {		
+		FuncionarioForm funcionarioForm = new FuncionarioForm();
+		funcionarioForm.setEmail(funcionario1.getEmail());
+		funcionarioForm.setNome(funcionario1.getNome());
+		ObjectMapper mapper = new ObjectMapper();
+		String funcionario = mapper.writeValueAsString(funcionarioForm);
+		
+		mockMvc.perform(post(VOTAR_RESTAURANTE + restaurante1.getId())
+				.content(funcionario).accept(MediaType.APPLICATION_JSON_VALUE)
+				.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(status().isOk());
+	}	
+	
+	@Test
+	public void testeVotarRestauranteErro() throws Exception {		
+		FuncionarioForm funcionarioForm = new FuncionarioForm();
+		funcionarioForm.setEmail(funcionario1.getEmail());
+		funcionarioForm.setNome(null);
+		ObjectMapper mapper = new ObjectMapper();
+		String funcionario = mapper.writeValueAsString(funcionarioForm);
+		
+		mockMvc.perform(post(VOTAR_RESTAURANTE + restaurante1.getId())
+				.content(funcionario).accept(MediaType.APPLICATION_JSON_VALUE)
+				.contentType(MediaType.APPLICATION_JSON_VALUE))
+				.andExpect(status().isNotFound());
+	}	
 	
 
 	
