@@ -39,7 +39,7 @@ import br.com.restaurante.repositorio.VotacaoRepositorio;
 public class RestauranteControladorTesteIntegracao {
 
 	private static final String LISTA_RESTAURANTE = "/restaurantes";
-	private static final String VOTAR_RESTAURANTE = "/votar/{id}";
+	private static final String VOTAR_RESTAURANTE = "/restaurantes/votar/";
 	
 	private static final Long TESTE1_ID_RESTAURANTE = 1L;
 	private static final Long TESTE2_ID_RESTAURANTE = 2L;
