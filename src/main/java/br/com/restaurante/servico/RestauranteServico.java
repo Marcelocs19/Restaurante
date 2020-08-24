@@ -57,7 +57,8 @@ public class RestauranteServico {
 				}				
 			}
 		} else {
-			return listaRestaurantesDisponiveis();
+			List<RestauranteDto> lista = new ArrayList<>();
+			return lista;
 		}
 	}
 

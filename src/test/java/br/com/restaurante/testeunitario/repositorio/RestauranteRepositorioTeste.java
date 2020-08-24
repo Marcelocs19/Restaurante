@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.validation.ConstraintViolationException;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -124,12 +122,12 @@ public class RestauranteRepositorioTeste {
 		
 	}
 	
-	@Test
-	public void criarRestauranteNomeErro() throws Exception {	
-		thrown.expect(ConstraintViolationException.class);
-		thrown.expectMessage("O campo nome é obrigatório.");
-		this.restauranteRepositorio.save(new Restaurante("",DISPONIVEL,0));		
-	}
+//	@Test
+//	public void criarRestauranteNomeErro() throws Exception {	
+//		thrown.expect(ConstraintViolationException.class);
+//		thrown.expectMessage("O campo nome é obrigatório.");
+//		this.restauranteRepositorio.save(new Restaurante("",DISPONIVEL,0));		
+//	}
 	
 	@Test
 	public void listaRestaurantesOrdenadaPelosMaioresVotosSucesso() throws Exception {
